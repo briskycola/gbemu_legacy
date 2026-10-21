@@ -2,7 +2,8 @@
 
 #include "common.h"
 
-typedef enum {
+typedef enum
+{
     AM_IMP,
     AM_R_D16,
     AM_R_R,
@@ -24,9 +25,10 @@ typedef enum {
     AM_MR,
     AM_A16_R,
     AM_R_A16
-} addr_mode;
+} AddrMode;
 
-typedef enum {
+typedef enum
+{
     RT_NONE,
     RT_A,
     RT_F,
@@ -42,9 +44,10 @@ typedef enum {
     RT_HL,
     RT_SP,
     RT_PC
-} reg_type;
+} RegType;
 
-typedef enum {
+typedef enum
+{
     IN_NONE,
     IN_NOP,
     IN_LD,
@@ -82,33 +85,39 @@ typedef enum {
     IN_EI,
     IN_RST,
     IN_ERR,
-    //CB instructions...
-    IN_RLC, 
+    // CB instructions...
+    IN_RLC,
     IN_RRC,
-    IN_RL, 
+    IN_RL,
     IN_RR,
-    IN_SLA, 
+    IN_SLA,
     IN_SRA,
-    IN_SWAP, 
+    IN_SWAP,
     IN_SRL,
-    IN_BIT, 
-    IN_RES, 
+    IN_BIT,
+    IN_RES,
     IN_SET
-} in_type;
+} InType;
 
-typedef enum {
-    CT_NONE, CT_NZ, CT_Z, CT_NC, CT_C
-} cond_type;
+typedef enum
+{
+    CT_NONE,
+    CT_NZ,
+    CT_Z,
+    CT_NC,
+    CT_C
+} CondType;
 
-typedef struct {
-    in_type type;
-    addr_mode mode;
-    reg_type reg_1;
-    reg_type reg_2;
-    cond_type cond;
+typedef struct
+{
+    InType type;
+    AddrMode mode;
+    RegType reg1;
+    RegType reg2;
+    CondType cond;
     u8 param;
 } instruction;
 
-instruction *instruction_by_opcode(u8 opcode);
+instruction *instructionByOpcode(u8 opcode);
 
-char *inst_name(in_type t);
+char *instName(InType t);

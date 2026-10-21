@@ -1,83 +1,96 @@
-#include "../include/ppu.h"
-#include "../include/lcd.h"
+#include "../include/cartridge.h"
 #include "../include/cpu.h"
 #include "../include/interrupts.h"
-#include "../include/cartridge.h"
+#include "../include/lcd.h"
+#include "../include/ppu.h"
 #include <string.h>
 
-void pipeline_fifo_reset();
-void pipeline_process();
-bool window_visible();
+void pipelineFifoReset();
+void pipelineProcess();
+bool windowVisible();
 
-void increment_ly() {
-    if (window_visible() && lcd_get_context()->ly >= lcd_get_context()->win_y &&
-        lcd_get_context()->ly < lcd_get_context()->win_y + YRES) {
-            ppu_get_context()->window_line++;
+void incrementLy()
+{
+    if (windowVisible() && lcdGetContext()->ly >= lcdGetContext()->winY &&
+        lcdGetContext()->ly < lcdGetContext()->winY + YRES)
+    {
+        ppuGetContext()->windowLine++;
     }
 
-    lcd_get_context()->ly++;
+    lcdGetContext()->ly++;
 
-    if (lcd_get_context()->ly == lcd_get_context()->ly_compare) {
+    if (lcdGetContext()->ly == lcdGetContext()->lyCompare)
+    {
         LCDS_LYC_SET(1);
 
-        if (LCDS_STAT_INT(SS_LYC)) {
-            cpu_request_interrupt(IT_LCD_STAT);
+        if (LCDS_STAT_INT(SS_LYC))
+        {
+            cpuRequestInterrupt(IT_LCD_STAT);
         }
-    } else {
+    }
+    else
+    {
         LCDS_LYC_SET(0);
     }
 }
 
-void load_line_sprites() {
-    int cur_y = lcd_get_context()->ly;
+void loadLineSprites()
+{
+    int curY = lcdGetContext()->ly;
 
-    u8 sprite_height = LCDC_OBJ_HEIGHT;
-    memset(ppu_get_context()->line_entry_array, 0, 
-        sizeof(ppu_get_context()->line_entry_array));
+    u8 spriteHeight = LCDC_OBJ_HEIGHT;
+    memset(ppuGetContext()->lineEntryArray, 0,
+           sizeof(ppuGetContext()->lineEntryArray));
 
-    for (int i=0; i<40; i++) {
-        oam_entry e = ppu_get_context()->oam_ram[i];
+    for (int i = 0; i < 40; i++)
+    {
+        OamEntry e = ppuGetContext()->oamRam[i];
 
-        if (!e.x) {
-            //x = 0 means not visible...
+        if (!e.x)
+        {
+            // x = 0 means not visible...
             continue;
         }
 
-        if (ppu_get_context()->line_sprite_count >= 10) {
-            //max 10 sprites per line...
+        if (ppuGetContext()->lineSpriteCount >= 10)
+        {
+            // max 10 sprites per line...
             break;
         }
 
-        if (e.y <= cur_y + 16 && e.y + sprite_height > cur_y + 16) {
-            //this sprite is on the current line.
+        if (e.y <= curY + 16 && e.y + spriteHeight > curY + 16)
+        {
+            // this sprite is on the current line.
 
-            oam_line_entry *entry = &ppu_get_context()->line_entry_array[
-                ppu_get_context()->line_sprite_count++
-            ];
+            OamLineEntry *entry = &ppuGetContext()->lineEntryArray[ppuGetContext()->lineSpriteCount++];
 
             entry->entry = e;
             entry->next = NULL;
 
-            if (!ppu_get_context()->line_sprites ||
-                    ppu_get_context()->line_sprites->entry.x > e.x) {
-                entry->next = ppu_get_context()->line_sprites;
-                ppu_get_context()->line_sprites = entry;
+            if (!ppuGetContext()->lineSprites ||
+                ppuGetContext()->lineSprites->entry.x > e.x)
+            {
+                entry->next = ppuGetContext()->lineSprites;
+                ppuGetContext()->lineSprites = entry;
                 continue;
             }
 
-            //do some sorting...
+            // do some sorting...
 
-            oam_line_entry *le = ppu_get_context()->line_sprites;
-            oam_line_entry *prev = le;
+            OamLineEntry *le = ppuGetContext()->lineSprites;
+            OamLineEntry *prev = le;
 
-            while(le) {
-                if (le->entry.x > e.x) {
+            while (le)
+            {
+                if (le->entry.x > e.x)
+                {
                     prev->next = entry;
                     entry->next = le;
                     break;
                 }
 
-                if (!le->next) {
+                if (!le->next)
+                {
                     le->next = entry;
                     break;
                 }
@@ -89,102 +102,118 @@ void load_line_sprites() {
     }
 }
 
-void ppu_mode_oam() {
-    if (ppu_get_context()->line_ticks >= 80) {
+void ppuModeOam()
+{
+    if (ppuGetContext()->lineTicks >= 80)
+    {
         LCDS_MODE_SET(MODE_XFER);
 
-        ppu_get_context()->pfc.cur_fetch_state = FS_TILE;
-        ppu_get_context()->pfc.line_x = 0;
-        ppu_get_context()->pfc.fetch_x = 0;
-        ppu_get_context()->pfc.pushed_x = 0;
-        ppu_get_context()->pfc.fifo_x = 0;
+        ppuGetContext()->pfc.curFetchState = FS_TILE;
+        ppuGetContext()->pfc.lineX = 0;
+        ppuGetContext()->pfc.fetchX = 0;
+        ppuGetContext()->pfc.pushedX = 0;
+        ppuGetContext()->pfc.fifoX = 0;
     }
 
-    if (ppu_get_context()->line_ticks == 1) {
-        //read oam on the first tick only...
-        ppu_get_context()->line_sprites = 0;
-        ppu_get_context()->line_sprite_count = 0;
+    if (ppuGetContext()->lineTicks == 1)
+    {
+        // read oam on the first tick only...
+        ppuGetContext()->lineSprites = 0;
+        ppuGetContext()->lineSpriteCount = 0;
 
-        load_line_sprites();
+        loadLineSprites();
     }
 }
 
-void ppu_mode_xfer() {
-    pipeline_process();
+void ppuModeXfer()
+{
+    pipelineProcess();
 
-    if (ppu_get_context()->pfc.pushed_x >= XRES) {
-        pipeline_fifo_reset();
+    if (ppuGetContext()->pfc.pushedX >= XRES)
+    {
+        pipelineFifoReset();
 
         LCDS_MODE_SET(MODE_HBLANK);
 
-        if (LCDS_STAT_INT(SS_HBLANK)) {
-            cpu_request_interrupt(IT_LCD_STAT);
+        if (LCDS_STAT_INT(SS_HBLANK))
+        {
+            cpuRequestInterrupt(IT_LCD_STAT);
         }
     }
 }
 
-void ppu_mode_vblank() {
-    if (ppu_get_context()->line_ticks >= TICKS_PER_LINE) {
-        increment_ly();
+void ppuModeVblank()
+{
+    if (ppuGetContext()->lineTicks >= TICKS_PER_LINE)
+    {
+        incrementLy();
 
-        if (lcd_get_context()->ly >= LINES_PER_FRAME) {
+        if (lcdGetContext()->ly >= LINES_PER_FRAME)
+        {
             LCDS_MODE_SET(MODE_OAM);
-            lcd_get_context()->ly = 0;
-            ppu_get_context()->window_line = 0;
+            lcdGetContext()->ly = 0;
+            ppuGetContext()->windowLine = 0;
         }
 
-        ppu_get_context()->line_ticks = 0;
+        ppuGetContext()->lineTicks = 0;
     }
 }
 
-static u32 target_frame_time = 1000 / 60;
-static long prev_frame_time = 0;
-static long start_timer = 0;
-static long frame_count = 0;
+static u32 targetFrameTime = 1000 / 60;
+static long prevFrameTime = 0;
+static long startTimer = 0;
+static long frameCount = 0;
 
-void ppu_mode_hblank() {
-    if (ppu_get_context()->line_ticks >= TICKS_PER_LINE) {
-        increment_ly();
+void ppuModeHblank()
+{
+    if (ppuGetContext()->lineTicks >= TICKS_PER_LINE)
+    {
+        incrementLy();
 
-        if (lcd_get_context()->ly >= YRES) {
+        if (lcdGetContext()->ly >= YRES)
+        {
             LCDS_MODE_SET(MODE_VBLANK);
 
-            cpu_request_interrupt(IT_VBLANK);
+            cpuRequestInterrupt(IT_VBLANK);
 
-            if (LCDS_STAT_INT(SS_VBLANK)) {
-                cpu_request_interrupt(IT_LCD_STAT);
+            if (LCDS_STAT_INT(SS_VBLANK))
+            {
+                cpuRequestInterrupt(IT_LCD_STAT);
             }
 
-            ppu_get_context()->current_frame++;
+            ppuGetContext()->currentFrame++;
 
-            //calc FPS...
-            u32 end = get_ticks();
-            u32 frame_time = end - prev_frame_time;
+            // calc FPS...
+            u32 end = getTicks();
+            u32 frameTime = end - prevFrameTime;
 
-            if (frame_time < target_frame_time) {
-                delay((target_frame_time - frame_time));
+            if (frameTime < targetFrameTime)
+            {
+                delay((targetFrameTime - frameTime));
             }
 
-            if (end - start_timer >= 1000) {
-                u32 fps = frame_count;
-                start_timer = end;
-                frame_count = 0;
+            if (end - startTimer >= 1000)
+            {
+                u32 fps = frameCount;
+                startTimer = end;
+                frameCount = 0;
 
                 printf("FPS: %d\n", fps);
 
-                if (cart_need_save()) {
-                    cart_battery_save();
+                if (cartNeedSave())
+                {
+                    cartBatterySave();
                 }
             }
 
-            frame_count++;
-            prev_frame_time = get_ticks();
-
-        } else {
+            frameCount++;
+            prevFrameTime = getTicks();
+        }
+        else
+        {
             LCDS_MODE_SET(MODE_OAM);
         }
 
-        ppu_get_context()->line_ticks = 0;
+        ppuGetContext()->lineTicks = 0;
     }
 }
-

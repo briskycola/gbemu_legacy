@@ -1,10 +1,10 @@
 #include "../include/bus.h"
 #include "../include/cartridge.h"
-#include "../include/ram.h"
 #include "../include/cpu.h"
+#include "../include/dma.h"
 #include "../include/io.h"
 #include "../include/ppu.h"
-#include "../include/dma.h"
+#include "../include/ram.h"
 
 // 0x0000 - 0x3FFF : ROM Bank 0
 // 0x4000 - 0x7FFF : ROM Bank 1 - Switchable
@@ -20,88 +20,130 @@
 // 0xFF00 - 0xFF7F : I/O Registers
 // 0xFF80 - 0xFFFE : Zero Page
 
-u8 bus_read(u16 address) {
-    if (address < 0x8000) {
-        //ROM Data
-        return cart_read(address);
-    } else if (address < 0xA000) {
-        //Char/Map Data
-        return ppu_vram_read(address);
-    } else if (address < 0xC000) {
-        //Cartridge RAM
-        return cart_read(address);
-    } else if (address < 0xE000) {
-        //WRAM (Working RAM)
-        return wram_read(address);
-    } else if (address < 0xFE00) {
-        //reserved echo ram...
+u8 busRead(u16 address)
+{
+    if (address < 0x8000)
+    {
+        // ROM Data
+        return cartRead(address);
+    }
+    else if (address < 0xA000)
+    {
+        // Char/Map Data
+        return ppuVramRead(address);
+    }
+    else if (address < 0xC000)
+    {
+        // Cartridge RAM
+        return cartRead(address);
+    }
+    else if (address < 0xE000)
+    {
+        // WRAM (Working RAM)
+        return wramRead(address);
+    }
+    else if (address < 0xFE00)
+    {
+        // reserved echo ram...
         return 0;
-    } else if (address < 0xFEA0) {
-        //OAM
-        if (dma_transferring()) {
+    }
+    else if (address < 0xFEA0)
+    {
+        // OAM
+        if (dmaTransferring())
+        {
             return 0xFF;
         }
 
-        return ppu_oam_read(address);
-    } else if (address < 0xFF00) {
-        //reserved unusable...
+        return ppuOamRead(address);
+    }
+    else if (address < 0xFF00)
+    {
+        // reserved unusable...
         return 0;
-    } else if (address < 0xFF80) {
-        //IO Registers...
-        return io_read(address);
-    } else if (address == 0xFFFF) {
-        //CPU ENABLE REGISTER...
-        return cpu_get_ie_register();
+    }
+    else if (address < 0xFF80)
+    {
+        // IO Registers...
+        return ioRead(address);
+    }
+    else if (address == 0xFFFF)
+    {
+        // CPU ENABLE REGISTER...
+        return cpuGetIeRegister();
     }
 
-    //NO_IMPL
-    return hram_read(address);
+    // NO_IMPL
+    return hramRead(address);
 }
 
-void bus_write(u16 address, u8 value) {
-    if (address < 0x8000) {
-        //ROM Data
-        cart_write(address, value);
-    } else if (address < 0xA000) {
-        //Char/Map Data
-        ppu_vram_write(address, value);
-    } else if (address < 0xC000) {
-        //EXT-RAM
-        cart_write(address, value);
-    } else if (address < 0xE000) {
-        //WRAM
-        wram_write(address, value);
-    } else if (address < 0xFE00) {
-        //reserved echo ram
-    } else if (address < 0xFEA0) {
-        //OAM
-        if (dma_transferring()) {
+void busWrite(u16 address, u8 value)
+{
+    if (address < 0x8000)
+    {
+        // ROM Data
+        cartWrite(address, value);
+    }
+    else if (address < 0xA000)
+    {
+        // Char/Map Data
+        ppuVramWrite(address, value);
+    }
+    else if (address < 0xC000)
+    {
+        // EXT-RAM
+        cartWrite(address, value);
+    }
+    else if (address < 0xE000)
+    {
+        // WRAM
+        wramWrite(address, value);
+    }
+    else if (address < 0xFE00)
+    {
+        // reserved echo ram
+    }
+    else if (address < 0xFEA0)
+    {
+        // OAM
+        if (dmaTransferring())
+        {
             return;
         }
-        
-        ppu_oam_write(address, value);
-    } else if (address < 0xFF00) {
-        //unusable reserved
-    } else if (address < 0xFF80) {
-        //IO Registers...
-        io_write(address, value);
-    } else if (address == 0xFFFF) {
-        //CPU SET ENABLE REGISTER
-        
-        cpu_set_ie_register(value);
-    } else {
-        hram_write(address, value);
+
+        ppuOamWrite(address, value);
+    }
+    else if (address < 0xFF00)
+    {
+        // unusable reserved
+    }
+    else if (address < 0xFF80)
+    {
+        // IO Registers...
+        ioWrite(address, value);
+    }
+    else if (address == 0xFFFF)
+    {
+        // CPU SET ENABLE REGISTER
+
+        cpuSetIeRegister(value);
+    }
+    else
+    {
+        hramWrite(address, value);
     }
 }
 
-u16 bus_read16(u16 address) {
-    u16 lo = bus_read(address);
-    u16 hi = bus_read(address + 1);
+u16 busRead16(u16 address)
+{
+    u16 lo = busRead(address);
+    u16 hi = busRead(address + 1);
 
     return lo | (hi << 8);
 }
 
-void bus_write16(u16 address, u16 value) {
-    bus_write(address + 1, (value >> 8) & 0xFF);
-    bus_write(address, value & 0xFF);
+void busWrite16(u16 address, u16 value)
+{
+    busWrite(address + 1, (value >> 8) & 0xFF);
+    busWrite(address, value & 0xFF);
 }

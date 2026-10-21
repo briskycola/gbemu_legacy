@@ -1,6 +1,6 @@
 #include "../include/stack.h"
-#include "../include/cpu.h"
 #include "../include/bus.h"
+#include "../include/cpu.h"
 
 /*
     STACK
@@ -62,7 +62,7 @@
     0xDFFA: 00
     0xDFFB: 00
     0xDFFC: 00
-    0xDFFD: 77 
+    0xDFFD: 77
     0xDFFE: 55 <- SP
     0xDFFF: 00
 
@@ -80,27 +80,31 @@
     0xDFFB: 00
     0xDFFC: 00
     0xDFFD: 88 <- SP
-    0xDFFE: 55 
+    0xDFFE: 55
     0xDFFF: 00
 */
 
-void stack_push(u8 data) {
-    cpu_get_regs()->sp--;
-    bus_write(cpu_get_regs()->sp, data);
+void stackPush(u8 data)
+{
+    cpuGetRegs()->sp--;
+    busWrite(cpuGetRegs()->sp, data);
 }
 
-void stack_push16(u16 data) {
-    stack_push((data >> 8) & 0xFF);
-    stack_push(data & 0xFF);
+void stackPush16(u16 data)
+{
+    stackPush((data >> 8) & 0xFF);
+    stackPush(data & 0xFF);
 }
 
-u8 stack_pop() {
-    return bus_read(cpu_get_regs()->sp++);
+u8 stackPop()
+{
+    return busRead(cpuGetRegs()->sp++);
 }
 
-u16 stack_pop16() {
-    u16 lo = stack_pop();
-    u16 hi = stack_pop();
+u16 stackPop16()
+{
+    u16 lo = stackPop();
+    u16 hi = stackPop();
 
     return (hi << 8) | lo;
 }

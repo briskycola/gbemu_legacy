@@ -1,83 +1,91 @@
 #include "../include/ppu.h"
 #include "../include/lcd.h"
-#include <string.h>
 #include "../include/ppu-sm.h"
+#include <string.h>
 
-void pipeline_fifo_reset();
-void pipeline_process();
+void pipelineFifoReset();
+void pipelineProcess();
 
-static ppu_context ctx;
+static PpuContext ctx;
 
-ppu_context *ppu_get_context() {
+PpuContext *ppuGetContext()
+{
     return &ctx;
 }
 
-void ppu_init() {
-    ctx.current_frame = 0;
-    ctx.line_ticks = 0;
-    ctx.video_buffer = malloc(YRES * XRES * sizeof(32));
+void ppuInit()
+{
+    ctx.currentFrame = 0;
+    ctx.lineTicks = 0;
+    ctx.videoBuffer = malloc(YRES * XRES * sizeof(32));
 
-    ctx.pfc.line_x = 0;
-    ctx.pfc.pushed_x = 0;
-    ctx.pfc.fetch_x = 0;
-    ctx.pfc.pixel_fifo.size = 0;
-    ctx.pfc.pixel_fifo.head = ctx.pfc.pixel_fifo.tail = NULL;
-    ctx.pfc.cur_fetch_state = FS_TILE;
+    ctx.pfc.lineX = 0;
+    ctx.pfc.pushedX = 0;
+    ctx.pfc.fetchX = 0;
+    ctx.pfc.pixelFifo.size = 0;
+    ctx.pfc.pixelFifo.head = ctx.pfc.pixelFifo.tail = NULL;
+    ctx.pfc.curFetchState = FS_TILE;
 
-    ctx.line_sprites = 0;
-    ctx.fetched_entry_count = 0;
-    ctx.window_line = 0;
+    ctx.lineSprites = 0;
+    ctx.fetchedEntryCount = 0;
+    ctx.windowLine = 0;
 
-    lcd_init();
+    lcdInit();
     LCDS_MODE_SET(MODE_OAM);
 
-    memset(ctx.oam_ram, 0, sizeof(ctx.oam_ram));
-    memset(ctx.video_buffer, 0, YRES * XRES * sizeof(u32));
+    memset(ctx.oamRam, 0, sizeof(ctx.oamRam));
+    memset(ctx.videoBuffer, 0, YRES * XRES * sizeof(u32));
 }
 
-void ppu_tick() {
-    ctx.line_ticks++;
+void ppuTick()
+{
+    ctx.lineTicks++;
 
-    switch(LCDS_MODE) {
+    switch (LCDS_MODE)
+    {
     case MODE_OAM:
-        ppu_mode_oam();
+        ppuModeOam();
         break;
     case MODE_XFER:
-        ppu_mode_xfer();
+        ppuModeXfer();
         break;
     case MODE_VBLANK:
-        ppu_mode_vblank();
+        ppuModeVblank();
         break;
     case MODE_HBLANK:
-        ppu_mode_hblank();
+        ppuModeHblank();
         break;
     }
 }
 
-
-void ppu_oam_write(u16 address, u8 value) {
-    if (address >= 0xFE00) {
+void ppuOamWrite(u16 address, u8 value)
+{
+    if (address >= 0xFE00)
+    {
         address -= 0xFE00;
     }
 
-    u8 *p = (u8 *)ctx.oam_ram;
+    u8 *p = (u8 *)ctx.oamRam;
     p[address] = value;
 }
 
-u8 ppu_oam_read(u16 address) {
-    if (address >= 0xFE00) {
+u8 ppuOamRead(u16 address)
+{
+    if (address >= 0xFE00)
+    {
         address -= 0xFE00;
     }
 
-    u8 *p = (u8 *)ctx.oam_ram;
+    u8 *p = (u8 *)ctx.oamRam;
     return p[address];
 }
 
-void ppu_vram_write(u16 address, u8 value) {
+void ppuVramWrite(u16 address, u8 value)
+{
     ctx.vram[address - 0x8000] = value;
 }
 
-u8 ppu_vram_read(u16 address) {
+u8 ppuVramRead(u16 address)
+{
     return ctx.vram[address - 0x8000];
 }
-

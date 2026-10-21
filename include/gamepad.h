@@ -2,7 +2,8 @@
 
 #include "common.h"
 
-typedef struct {
+typedef struct
+{
     bool start;
     bool select;
     bool a;
@@ -11,12 +12,12 @@ typedef struct {
     bool down;
     bool left;
     bool right;
-} gamepad_state;
+} GamepadState;
 
-void gamepad_init();
-bool gamepad_button_sel();
-bool gamepad_dir_sel();
-void gamepad_set_sel(u8 value);
+void gamepadInit();
+bool gamepadButtonSel();
+bool gamepadDirSel();
+void gamepadSetSel(u8 value);
 
-gamepad_state *gamepad_get_state();
-u8 gamepad_get_output();
+GamepadState *gamepadGetState();
+u8 gamepadGetOutput();
