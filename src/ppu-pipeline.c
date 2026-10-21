@@ -9,7 +9,7 @@ bool windowVisible()
            lcdGetContext()->winY < YRES;
 }
 
-void pixelFifoPush(u32 value)
+void pixelFifoPush(uint32_t value)
 {
     FifoEntry *next = malloc(sizeof(FifoEntry));
     next->next = NULL;
@@ -29,7 +29,7 @@ void pixelFifoPush(u32 value)
     ppuGetContext()->pfc.pixelFifo.size++;
 }
 
-u32 pixelFifoPop()
+uint32_t pixelFifoPop()
 {
     if (ppuGetContext()->pfc.pixelFifo.size <= 0)
     {
@@ -41,13 +41,13 @@ u32 pixelFifoPop()
     ppuGetContext()->pfc.pixelFifo.head = popped->next;
     ppuGetContext()->pfc.pixelFifo.size--;
 
-    u32 val = popped->value;
+    uint32_t val = popped->value;
     free(popped);
 
     return val;
 }
 
-u32 fetchSpritePixels(int bit, u32 color, u8 bgColor)
+uint32_t fetchSpritePixels(int bit, uint32_t color, uint8_t bgColor)
 {
     for (int i = 0; i < ppuGetContext()->fetchedEntryCount; i++)
     {
@@ -75,8 +75,8 @@ u32 fetchSpritePixels(int bit, u32 color, u8 bgColor)
             bit = offset;
         }
 
-        u8 hi = !!(ppuGetContext()->pfc.fetchEntryData[i * 2] & (1 << bit));
-        u8 lo = !!(ppuGetContext()->pfc.fetchEntryData[(i * 2) + 1] & (1 << bit)) << 1;
+        uint8_t hi = !!(ppuGetContext()->pfc.fetchEntryData[i * 2] & (1 << bit));
+        uint8_t lo = !!(ppuGetContext()->pfc.fetchEntryData[(i * 2) + 1] & (1 << bit)) << 1;
 
         bool bgPriority = ppuGetContext()->fetchedEntries[i].fBgp;
 
@@ -113,9 +113,9 @@ bool pipelineFifoAdd()
     for (int i = 0; i < 8; i++)
     {
         int bit = 7 - i;
-        u8 hi = !!(ppuGetContext()->pfc.bgwFetchData[1] & (1 << bit));
-        u8 lo = !!(ppuGetContext()->pfc.bgwFetchData[2] & (1 << bit)) << 1;
-        u32 color = lcdGetContext()->bgColors[hi | lo];
+        uint8_t hi = !!(ppuGetContext()->pfc.bgwFetchData[1] & (1 << bit));
+        uint8_t lo = !!(ppuGetContext()->pfc.bgwFetchData[2] & (1 << bit)) << 1;
+        uint32_t color = lcdGetContext()->bgColors[hi | lo];
 
         if (!LCDC_BGW_ENABLE)
         {
@@ -162,14 +162,14 @@ void pipelineLoadSpriteTile()
     }
 }
 
-void pipelineLoadSpriteData(u8 offset)
+void pipelineLoadSpriteData(uint8_t offset)
 {
     int curY = lcdGetContext()->ly;
-    u8 spriteHeight = LCDC_OBJ_HEIGHT;
+    uint8_t spriteHeight = LCDC_OBJ_HEIGHT;
 
     for (int i = 0; i < ppuGetContext()->fetchedEntryCount; i++)
     {
-        u8 ty = ((curY + 16) - ppuGetContext()->fetchedEntries[i].y) * 2;
+        uint8_t ty = ((curY + 16) - ppuGetContext()->fetchedEntries[i].y) * 2;
 
         if (ppuGetContext()->fetchedEntries[i].fYFlip)
         {
@@ -177,7 +177,7 @@ void pipelineLoadSpriteData(u8 offset)
             ty = ((spriteHeight * 2) - 2) - ty;
         }
 
-        u8 tileIndex = ppuGetContext()->fetchedEntries[i].tile;
+        uint8_t tileIndex = ppuGetContext()->fetchedEntries[i].tile;
 
         if (spriteHeight == 16)
         {
@@ -196,14 +196,14 @@ void pipelineLoadWindowTile()
         return;
     }
 
-    u8 windowY = lcdGetContext()->winY;
+    uint8_t windowY = lcdGetContext()->winY;
 
     if (ppuGetContext()->pfc.fetchX + 7 >= lcdGetContext()->winX &&
         ppuGetContext()->pfc.fetchX + 7 < lcdGetContext()->winX + YRES + 14)
     {
         if (lcdGetContext()->ly >= windowY && lcdGetContext()->ly < windowY + XRES)
         {
-            u8 wTileY = ppuGetContext()->windowLine / 8;
+            uint8_t wTileY = ppuGetContext()->windowLine / 8;
 
             ppuGetContext()->pfc.bgwFetchData[0] = busRead(LCDC_WIN_MAP_AREA +
                                                            ((ppuGetContext()->pfc.fetchX + 7 - lcdGetContext()->winX) / 8) +
@@ -294,7 +294,7 @@ void pipelinePushPixel()
 {
     if (ppuGetContext()->pfc.pixelFifo.size > 8)
     {
-        u32 pixelData = pixelFifoPop();
+        uint32_t pixelData = pixelFifoPop();
 
         if (ppuGetContext()->pfc.lineX >= (lcdGetContext()->scrollX % 8))
         {

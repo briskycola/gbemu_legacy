@@ -6,9 +6,9 @@
 
 typedef struct
 {
-    u16 pc;
-    u8 value;
-    u8 bank;
+    uint16_t pc;
+    uint8_t value;
+    uint8_t bank;
 } BankTraceEntry;
 
 static BankTraceEntry bankTrace[BANK_TRACE_LENGTH];
@@ -18,22 +18,22 @@ static unsigned bankTraceCount;
 typedef struct
 {
     char filename[1024];
-    u32 romSize;
-    u8 *romData;
+    uint32_t romSize;
+    uint8_t *romData;
     RomHeader *header;
 
     // mbc1 related data
     bool ramEnabled;
     bool ramBanking;
 
-    u8 *romBankX;
-    u8 bankingMode;
+    uint8_t *romBankX;
+    uint8_t bankingMode;
 
-    u8 romBankValue;
-    u8 ramBankValue;
+    uint8_t romBankValue;
+    uint8_t ramBankValue;
 
-    u8 *ramBank;      // current selected ram bank
-    u8 *ramBanks[16]; // all ram banks
+    uint8_t *ramBank;      // current selected ram bank
+    uint8_t *ramBanks[16]; // all ram banks
 
     // for battery
     bool battery;  // has battery
@@ -237,8 +237,8 @@ bool cartLoad(char *cart)
 
     cartSetupBanking();
 
-    u16 x = 0;
-    for (u16 i = 0x0134; i <= 0x014C; i++)
+    uint16_t x = 0;
+    for (uint16_t i = 0x0134; i <= 0x014C; i++)
     {
         x = x - ctx.romData[i] - 1;
     }
@@ -295,7 +295,7 @@ void cartBatterySave()
     fclose(fp);
 }
 
-u8 cartRead(u16 address)
+uint8_t cartRead(uint16_t address)
 {
     if (!cartMbc1() || address < 0x4000)
     {
@@ -320,7 +320,7 @@ u8 cartRead(u16 address)
     return ctx.romBankX[address - 0x4000];
 }
 
-void cartWrite(u16 address, u8 value)
+void cartWrite(uint16_t address, uint8_t value)
 {
     if (!cartMbc1())
     {
@@ -412,9 +412,9 @@ void cartWrite(u16 address, u8 value)
     }
 }
 
-u8 cartCurrentRomBank()
+uint8_t cartCurrentRomBank()
 {
-    return (u8)((ctx.romBankX - ctx.romData) / 0x4000);
+    return (uint8_t)((ctx.romBankX - ctx.romData) / 0x4000);
 }
 
 void cartDumpBankTrace()

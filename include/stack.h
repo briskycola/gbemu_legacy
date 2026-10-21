@@ -2,8 +2,8 @@
 
 #include "common.h"
 
-void stackPush(u8 data);
-void stackPush16(u16 data);
+void stackPush(uint8_t data);
+void stackPush16(uint16_t data);
 
-u8 stackPop();
-u16 stackPop16();
+uint8_t stackPop();
+uint16_t stackPop16();

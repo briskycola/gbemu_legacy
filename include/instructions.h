@@ -115,9 +115,9 @@ typedef struct
     RegType reg1;
     RegType reg2;
     CondType cond;
-    u8 param;
+    uint8_t param;
 } instruction;
 
-instruction *instructionByOpcode(u8 opcode);
+instruction *instructionByOpcode(uint8_t opcode);
 
 char *instName(InType t);

@@ -2,5 +2,5 @@
 
 #include "common.h"
 
-u8 ioRead(u16 address);
-void ioWrite(u16 address, u8 value);
+uint8_t ioRead(uint16_t address);
+void ioWrite(uint16_t address, uint8_t value);

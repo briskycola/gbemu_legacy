@@ -57,7 +57,7 @@ RegType rtLookup[] = {
     RT_HL,
     RT_A};
 
-RegType decodeReg(u8 reg)
+RegType decodeReg(uint8_t reg)
 {
     if (reg > 0b111)
     {
@@ -69,11 +69,11 @@ RegType decodeReg(u8 reg)
 
 static void procCb(CpuContext *ctx)
 {
-    u8 op = ctx->fetchedData;
+    uint8_t op = ctx->fetchedData;
     RegType reg = decodeReg(op & 0b111);
-    u8 bit = (op >> 3) & 0b111;
-    u8 bitOp = (op >> 6) & 0b11;
-    u8 regVal = cpuReadReg8(reg);
+    uint8_t bit = (op >> 3) & 0b111;
+    uint8_t bitOp = (op >> 6) & 0b11;
+    uint8_t regVal = cpuReadReg8(reg);
 
     emuCycles(1);
 
@@ -110,7 +110,7 @@ static void procCb(CpuContext *ctx)
     {
         // RLC
         bool setC = false;
-        u8 result = (regVal << 1) & 0xFF;
+        uint8_t result = (regVal << 1) & 0xFF;
 
         if ((regVal & (1 << 7)) != 0)
         {
@@ -126,7 +126,7 @@ static void procCb(CpuContext *ctx)
     case 1:
     {
         // RRC
-        u8 old = regVal;
+        uint8_t old = regVal;
         regVal >>= 1;
         regVal |= (old << 7);
 
@@ -138,7 +138,7 @@ static void procCb(CpuContext *ctx)
     case 2:
     {
         // RL
-        u8 old = regVal;
+        uint8_t old = regVal;
         regVal <<= 1;
         regVal |= flagC;
 
@@ -150,7 +150,7 @@ static void procCb(CpuContext *ctx)
     case 3:
     {
         // RR
-        u8 old = regVal;
+        uint8_t old = regVal;
         regVal >>= 1;
 
         regVal |= (flagC << 7);
@@ -163,7 +163,7 @@ static void procCb(CpuContext *ctx)
     case 4:
     {
         // SLA
-        u8 old = regVal;
+        uint8_t old = regVal;
         regVal <<= 1;
 
         cpuSetReg8(reg, regVal);
@@ -174,7 +174,7 @@ static void procCb(CpuContext *ctx)
     case 5:
     {
         // SRA
-        u8 u = (int8_t)regVal >> 1;
+        uint8_t u = (int8_t)regVal >> 1;
         cpuSetReg8(reg, u);
         cpuSetFlags(ctx, !u, 0, 0, regVal & 1);
     }
@@ -192,7 +192,7 @@ static void procCb(CpuContext *ctx)
     case 7:
     {
         // SRL
-        u8 u = regVal >> 1;
+        uint8_t u = regVal >> 1;
         cpuSetReg8(reg, u);
         cpuSetFlags(ctx, !u, 0, 0, regVal & 1);
     }
@@ -205,7 +205,7 @@ static void procCb(CpuContext *ctx)
 
 static void procRlca(CpuContext *ctx)
 {
-    u8 u = ctx->regs.a;
+    uint8_t u = ctx->regs.a;
     bool c = (u >> 7) & 1;
     u = (u << 1) | c;
     ctx->regs.a = u;
@@ -215,7 +215,7 @@ static void procRlca(CpuContext *ctx)
 
 static void procRrca(CpuContext *ctx)
 {
-    u8 b = ctx->regs.a & 1;
+    uint8_t b = ctx->regs.a & 1;
     ctx->regs.a >>= 1;
     ctx->regs.a |= (b << 7);
 
@@ -224,9 +224,9 @@ static void procRrca(CpuContext *ctx)
 
 static void procRla(CpuContext *ctx)
 {
-    u8 u = ctx->regs.a;
-    u8 cf = CPU_FLAG_C;
-    u8 c = (u >> 7) & 1;
+    uint8_t u = ctx->regs.a;
+    uint8_t cf = CPU_FLAG_C;
+    uint8_t c = (u >> 7) & 1;
 
     ctx->regs.a = (u << 1) | cf;
     cpuSetFlags(ctx, 0, 0, 0, c);
@@ -239,7 +239,7 @@ static void procStop(CpuContext *ctx)
 
 static void procDaa(CpuContext *ctx)
 {
-    u8 u = 0;
+    uint8_t u = 0;
     int fc = 0;
 
     if (CPU_FLAG_H || (!CPU_FLAG_N && (ctx->regs.a & 0xF) > 9))
@@ -289,8 +289,8 @@ static void procHalt(CpuContext *ctx)
 
 static void procRra(CpuContext *ctx)
 {
-    u8 carry = CPU_FLAG_C;
-    u8 newC = ctx->regs.a & 1;
+    uint8_t carry = CPU_FLAG_C;
+    uint8_t newC = ctx->regs.a & 1;
 
     ctx->regs.a >>= 1;
     ctx->regs.a |= (carry << 7);
@@ -363,11 +363,11 @@ static void procLd(CpuContext *ctx)
 
     if (ctx->curInst->mode == AM_HL_SPR)
     {
-        u8 hflag = (cpuReadReg(ctx->curInst->reg2) & 0xF) +
+        uint8_t hflag = (cpuReadReg(ctx->curInst->reg2) & 0xF) +
                        (ctx->fetchedData & 0xF) >=
                    0x10;
 
-        u8 cflag = (cpuReadReg(ctx->curInst->reg2) & 0xFF) +
+        uint8_t cflag = (cpuReadReg(ctx->curInst->reg2) & 0xFF) +
                        (ctx->fetchedData & 0xFF) >=
                    0x100;
 
@@ -417,7 +417,7 @@ static bool checkCond(CpuContext *ctx)
     return false;
 }
 
-static void gotoAddr(CpuContext *ctx, u16 addr, bool pushpc)
+static void gotoAddr(CpuContext *ctx, uint16_t addr, bool pushpc)
 {
     if (checkCond(ctx))
     {
@@ -440,7 +440,7 @@ static void procJp(CpuContext *ctx)
 static void procJr(CpuContext *ctx)
 {
     int8_t rel = (int8_t)(ctx->fetchedData & 0xFF);
-    u16 addr = ctx->regs.pc + rel;
+    uint16_t addr = ctx->regs.pc + rel;
     gotoAddr(ctx, addr, false);
 }
 
@@ -463,12 +463,12 @@ static void procRet(CpuContext *ctx)
 
     if (checkCond(ctx))
     {
-        u16 lo = stackPop();
+        uint16_t lo = stackPop();
         emuCycles(1);
-        u16 hi = stackPop();
+        uint16_t hi = stackPop();
         emuCycles(1);
 
-        u16 n = (hi << 8) | lo;
+        uint16_t n = (hi << 8) | lo;
         ctx->regs.pc = n;
 
         emuCycles(1);
@@ -483,12 +483,12 @@ static void procReti(CpuContext *ctx)
 
 static void procPop(CpuContext *ctx)
 {
-    u16 lo = stackPop();
+    uint16_t lo = stackPop();
     emuCycles(1);
-    u16 hi = stackPop();
+    uint16_t hi = stackPop();
     emuCycles(1);
 
-    u16 n = (hi << 8) | lo;
+    uint16_t n = (hi << 8) | lo;
 
     cpuSetReg(ctx->curInst->reg1, n);
 
@@ -500,11 +500,11 @@ static void procPop(CpuContext *ctx)
 
 static void procPush(CpuContext *ctx)
 {
-    u16 hi = (cpuReadReg(ctx->curInst->reg1) >> 8) & 0xFF;
+    uint16_t hi = (cpuReadReg(ctx->curInst->reg1) >> 8) & 0xFF;
     emuCycles(1);
     stackPush(hi);
 
-    u16 lo = cpuReadReg(ctx->curInst->reg1) & 0xFF;
+    uint16_t lo = cpuReadReg(ctx->curInst->reg1) & 0xFF;
     emuCycles(1);
     stackPush(lo);
 
@@ -513,7 +513,7 @@ static void procPush(CpuContext *ctx)
 
 static void procInc(CpuContext *ctx)
 {
-    u16 val = cpuReadReg(ctx->curInst->reg1) + 1;
+    uint16_t val = cpuReadReg(ctx->curInst->reg1) + 1;
 
     if (is16Bit(ctx->curInst->reg1))
     {
@@ -542,7 +542,7 @@ static void procInc(CpuContext *ctx)
 
 static void procDec(CpuContext *ctx)
 {
-    u16 val = cpuReadReg(ctx->curInst->reg1) - 1;
+    uint16_t val = cpuReadReg(ctx->curInst->reg1) - 1;
 
     if (is16Bit(ctx->curInst->reg1))
     {
@@ -570,7 +570,7 @@ static void procDec(CpuContext *ctx)
 
 static void procSub(CpuContext *ctx)
 {
-    u16 val = cpuReadReg(ctx->curInst->reg1) - ctx->fetchedData;
+    uint16_t val = cpuReadReg(ctx->curInst->reg1) - ctx->fetchedData;
 
     int z = val == 0;
     int h = ((int)cpuReadReg(ctx->curInst->reg1) & 0xF) - ((int)ctx->fetchedData & 0xF) < 0;
@@ -582,7 +582,7 @@ static void procSub(CpuContext *ctx)
 
 static void procSbc(CpuContext *ctx)
 {
-    u8 val = ctx->fetchedData + CPU_FLAG_C;
+    uint8_t val = ctx->fetchedData + CPU_FLAG_C;
 
     int z = cpuReadReg(ctx->curInst->reg1) - val == 0;
 
@@ -595,9 +595,9 @@ static void procSbc(CpuContext *ctx)
 
 static void procAdc(CpuContext *ctx)
 {
-    u16 u = ctx->fetchedData;
-    u16 a = ctx->regs.a;
-    u16 c = CPU_FLAG_C;
+    uint16_t u = ctx->fetchedData;
+    uint16_t a = ctx->regs.a;
+    uint16_t c = CPU_FLAG_C;
 
     ctx->regs.a = (a + u + c) & 0xFF;
 
@@ -608,7 +608,7 @@ static void procAdc(CpuContext *ctx)
 
 static void procAdd(CpuContext *ctx)
 {
-    u32 val = cpuReadReg(ctx->curInst->reg1) + ctx->fetchedData;
+    uint32_t val = cpuReadReg(ctx->curInst->reg1) + ctx->fetchedData;
 
     bool is16bit = is16Bit(ctx->curInst->reg1);
 
@@ -630,7 +630,7 @@ static void procAdd(CpuContext *ctx)
     {
         z = -1;
         h = (cpuReadReg(ctx->curInst->reg1) & 0xFFF) + (ctx->fetchedData & 0xFFF) >= 0x1000;
-        u32 n = ((u32)cpuReadReg(ctx->curInst->reg1)) + ((u32)ctx->fetchedData);
+        uint32_t n = ((uint32_t)cpuReadReg(ctx->curInst->reg1)) + ((uint32_t)ctx->fetchedData);
         c = n >= 0x10000;
     }
 

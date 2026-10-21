@@ -20,7 +20,7 @@ bool gamepadDirSel()
     return ctx.dirSel;
 }
 
-void gamepadSetSel(u8 value)
+void gamepadSetSel(uint8_t value)
 {
     ctx.buttonSel = value & 0x20;
     ctx.dirSel = value & 0x10;
@@ -31,9 +31,9 @@ GamepadState *gamepadGetState()
     return &ctx.controller;
 }
 
-u8 gamepadGetOutput()
+uint8_t gamepadGetOutput()
 {
-    u8 output = 0xCF;
+    uint8_t output = 0xCF;
 
     if (!gamepadButtonSel())
     {

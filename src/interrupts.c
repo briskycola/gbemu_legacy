@@ -2,13 +2,13 @@
 #include "../include/cpu.h"
 #include "../include/stack.h"
 
-void intHandle(CpuContext *ctx, u16 address)
+void intHandle(CpuContext *ctx, uint16_t address)
 {
     stackPush16(ctx->regs.pc);
     ctx->regs.pc = address;
 }
 
-bool intCheck(CpuContext *ctx, u16 address, InterruptType it)
+bool intCheck(CpuContext *ctx, uint16_t address, InterruptType it)
 {
     if (ctx->intFlags & it && ctx->ieRegister & it)
     {

@@ -5,22 +5,22 @@
 typedef struct
 {
     // registers...
-    u8 lcdc;
-    u8 lcds;
-    u8 scrollY;
-    u8 scrollX;
-    u8 ly;
-    u8 lyCompare;
-    u8 dma;
-    u8 bgPalette;
-    u8 objPalette[2];
-    u8 winY;
-    u8 winX;
+    uint8_t lcdc;
+    uint8_t lcds;
+    uint8_t scrollY;
+    uint8_t scrollX;
+    uint8_t ly;
+    uint8_t lyCompare;
+    uint8_t dma;
+    uint8_t bgPalette;
+    uint8_t objPalette[2];
+    uint8_t winY;
+    uint8_t winX;
 
     // other data...
-    u32 bgColors[4];
-    u32 sp1Colors[4];
-    u32 sp2Colors[4];
+    uint32_t bgColors[4];
+    uint32_t sp1Colors[4];
+    uint32_t sp2Colors[4];
 
 } LcdContext;
 
@@ -65,5 +65,5 @@ typedef enum
 
 void lcdInit();
 
-u8 lcdRead(u16 address);
-void lcdWrite(u16 address, u8 value);
+uint8_t lcdRead(uint16_t address);
+void lcdWrite(uint16_t address, uint8_t value);

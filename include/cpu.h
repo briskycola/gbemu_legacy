@@ -5,16 +5,16 @@
 
 typedef struct
 {
-    u8 a;
-    u8 f;
-    u8 b;
-    u8 c;
-    u8 d;
-    u8 e;
-    u8 h;
-    u8 l;
-    u16 pc;
-    u16 sp;
+    uint8_t a;
+    uint8_t f;
+    uint8_t b;
+    uint8_t c;
+    uint8_t d;
+    uint8_t e;
+    uint8_t h;
+    uint8_t l;
+    uint16_t pc;
+    uint16_t sp;
 } CpuRegisters;
 
 typedef struct
@@ -22,10 +22,10 @@ typedef struct
     CpuRegisters regs;
 
     // current fetch...
-    u16 fetchedData;
-    u16 memDest;
+    uint16_t fetchedData;
+    uint16_t memDest;
     bool destIsMem;
-    u8 curOpcode;
+    uint8_t curOpcode;
     instruction *curInst;
 
     bool halted;
@@ -33,8 +33,8 @@ typedef struct
 
     bool intMasterEnabled;
     bool enablingIme;
-    u8 ieRegister;
-    u8 intFlags;
+    uint8_t ieRegister;
+    uint8_t intFlags;
 
 } CpuContext;
 
@@ -42,9 +42,9 @@ CpuRegisters *cpuGetRegs();
 
 void cpuInit();
 bool cpuStep();
-void cpuTraceInstruction(u16 pc, u8 opcode, u8 romBank);
+void cpuTraceInstruction(uint16_t pc, uint8_t opcode, uint8_t romBank);
 void cpuDumpTrace();
-void cpuNoteHaltBug(u16 pc);
+void cpuNoteHaltBug(uint16_t pc);
 
 typedef void (*IN_PROC)(CpuContext *);
 
@@ -55,16 +55,16 @@ IN_PROC instGetProcessor(InType type);
 #define CPU_FLAG_H BIT(ctx->regs.f, 5)
 #define CPU_FLAG_C BIT(ctx->regs.f, 4)
 
-u16 cpuReadReg(RegType rt);
-void cpuSetReg(RegType rt, u16 val);
+uint16_t cpuReadReg(RegType rt);
+void cpuSetReg(RegType rt, uint16_t val);
 
-u8 cpuGetIeRegister();
-void cpuSetIeRegister(u8 n);
+uint8_t cpuGetIeRegister();
+void cpuSetIeRegister(uint8_t n);
 
-u8 cpuReadReg8(RegType rt);
-void cpuSetReg8(RegType rt, u8 val);
+uint8_t cpuReadReg8(RegType rt);
+void cpuSetReg8(RegType rt, uint8_t val);
 
-u8 cpuGetIntFlags();
-void cpuSetIntFlags(u8 value);
+uint8_t cpuGetIntFlags();
+void cpuSetIntFlags(uint8_t value);
 
 void instToStr(CpuContext *ctx, char *str);

@@ -11,15 +11,15 @@ CpuContext ctx = {0};
 #define CPU_DEBUG 0
 
 #define CPU_TRACE_LENGTH 128
-static u16 tracePc[CPU_TRACE_LENGTH];
-static u8 traceOpcode[CPU_TRACE_LENGTH];
-static u8 traceBank[CPU_TRACE_LENGTH];
+static uint16_t tracePc[CPU_TRACE_LENGTH];
+static uint8_t traceOpcode[CPU_TRACE_LENGTH];
+static uint8_t traceBank[CPU_TRACE_LENGTH];
 static unsigned traceNext;
 static unsigned traceCount;
 static unsigned haltBugCount;
-static u16 lastHaltBugPc;
+static uint16_t lastHaltBugPc;
 
-void cpuTraceInstruction(u16 pc, u8 opcode, u8 romBank)
+void cpuTraceInstruction(uint16_t pc, uint8_t opcode, uint8_t romBank)
 {
     // The ROM uses the fixed 0x0038 vector as a one-byte call trampoline.
     // Omitting its four instructions leaves more room for the actual caller.
@@ -38,7 +38,7 @@ void cpuTraceInstruction(u16 pc, u8 opcode, u8 romBank)
     }
 }
 
-void cpuNoteHaltBug(u16 pc)
+void cpuNoteHaltBug(uint16_t pc)
 {
     haltBugCount++;
     lastHaltBugPc = pc;
@@ -78,9 +78,9 @@ void cpuInit()
 
 static void fetchInstruction()
 {
-    u16 pc = ctx.regs.pc;
+    uint16_t pc = ctx.regs.pc;
     ctx.curOpcode = busRead(pc);
-    u8 romBank = pc < 0x4000 ? 0 : cartCurrentRomBank();
+    uint8_t romBank = pc < 0x4000 ? 0 : cartCurrentRomBank();
     cpuTraceInstruction(pc, ctx.curOpcode, romBank);
     if (ctx.haltBug)
     {
@@ -112,7 +112,7 @@ bool cpuStep()
 
     if (!ctx.halted)
     {
-        // u16 pc = ctx.regs.pc;
+        // uint16_t pc = ctx.regs.pc;
 
         fetchInstruction();
         emuCycles(1);
@@ -172,12 +172,12 @@ bool cpuStep()
     return true;
 }
 
-u8 cpuGetIeRegister()
+uint8_t cpuGetIeRegister()
 {
     return ctx.ieRegister;
 }
 
-void cpuSetIeRegister(u8 n)
+void cpuSetIeRegister(uint8_t n)
 {
     ctx.ieRegister = n;
 }

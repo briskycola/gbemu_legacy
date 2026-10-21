@@ -53,33 +53,33 @@ void uiInit()
     SDL_SetWindowPosition(sdlDebugWindow, x + SCREEN_WIDTH + 10, y);
 }
 
-void delay(u32 ms)
+void delay(uint32_t ms)
 {
     SDL_Delay(ms);
 }
 
-u32 getTicks()
+uint32_t getTicks()
 {
     return SDL_GetTicks();
 }
 
 static unsigned long tileColors[4] = {0xFFFFFFFF, 0xFFAAAAAA, 0xFF555555, 0xFF000000};
 
-void displayTile(SDL_Surface *surface, u16 startLocation, u16 tileNum, int x, int y)
+void displayTile(SDL_Surface *surface, uint16_t startLocation, uint16_t tileNum, int x, int y)
 {
     SDL_Rect rc;
 
     for (int tileY = 0; tileY < 16; tileY += 2)
     {
-        u8 b1 = busRead(startLocation + (tileNum * 16) + tileY);
-        u8 b2 = busRead(startLocation + (tileNum * 16) + tileY + 1);
+        uint8_t b1 = busRead(startLocation + (tileNum * 16) + tileY);
+        uint8_t b2 = busRead(startLocation + (tileNum * 16) + tileY + 1);
 
         for (int bit = 7; bit >= 0; bit--)
         {
-            u8 hi = !!(b1 & (1 << bit)) << 1;
-            u8 lo = !!(b2 & (1 << bit));
+            uint8_t hi = !!(b1 & (1 << bit)) << 1;
+            uint8_t lo = !!(b2 & (1 << bit));
 
-            u8 color = hi | lo;
+            uint8_t color = hi | lo;
 
             rc.x = x + ((7 - bit) * scale);
             rc.y = y + (tileY / 2 * scale);
@@ -97,7 +97,7 @@ void uiUpdate()
     rc.x = rc.y = 0;
     rc.w = rc.h = 2048;
 
-    u32 *videoBuffer = ppuGetContext()->videoBuffer;
+    uint32_t *videoBuffer = ppuGetContext()->videoBuffer;
 
     for (int lineNum = 0; lineNum < YRES; lineNum++)
     {
@@ -118,7 +118,7 @@ void uiUpdate()
     SDL_RenderPresent(sdlRenderer);
 }
 
-void uiOnKey(bool down, u32 keyCode)
+void uiOnKey(bool down, uint32_t keyCode)
 {
 
     switch (keyCode)

@@ -19,43 +19,43 @@ typedef enum
 typedef struct _fifo_entry
 {
     struct _fifo_entry *next;
-    u32 value; // 32 bit color value.
+    uint32_t value; // 32 bit color value.
 } FifoEntry;
 
 typedef struct
 {
     FifoEntry *head;
     FifoEntry *tail;
-    u32 size;
+    uint32_t size;
 } fifo;
 
 typedef struct
 {
     FetchState curFetchState;
     fifo pixelFifo;
-    u8 lineX;
-    u8 pushedX;
-    u8 fetchX;
-    u8 bgwFetchData[3];
-    u8 fetchEntryData[6]; // oam data..
-    u8 mapY;
-    u8 mapX;
-    u8 tileY;
-    u8 fifoX;
+    uint8_t lineX;
+    uint8_t pushedX;
+    uint8_t fetchX;
+    uint8_t bgwFetchData[3];
+    uint8_t fetchEntryData[6]; // oam data..
+    uint8_t mapY;
+    uint8_t mapX;
+    uint8_t tileY;
+    uint8_t fifoX;
 } PixelFifoContext;
 
 typedef struct
 {
-    u8 y;
-    u8 x;
-    u8 tile;
+    uint8_t y;
+    uint8_t x;
+    uint8_t tile;
 
-    u8 fCgbPn : 3;
-    u8 fCgbVramBank : 1;
-    u8 fPn : 1;
-    u8 fXFlip : 1;
-    u8 fYFlip : 1;
-    u8 fBgp : 1;
+    uint8_t fCgbPn : 3;
+    uint8_t fCgbVramBank : 1;
+    uint8_t fPn : 1;
+    uint8_t fXFlip : 1;
+    uint8_t fYFlip : 1;
+    uint8_t fBgp : 1;
 
 } OamEntry;
 
@@ -77,30 +77,30 @@ typedef struct _oam_line_entry
 typedef struct
 {
     OamEntry oamRam[40];
-    u8 vram[0x2000];
+    uint8_t vram[0x2000];
 
     PixelFifoContext pfc;
 
-    u8 lineSpriteCount;              // 0 to 10 sprites.
+    uint8_t lineSpriteCount;              // 0 to 10 sprites.
     OamLineEntry *lineSprites;       // linked list of current sprites on line.
     OamLineEntry lineEntryArray[10]; // memory to use for list.
 
-    u8 fetchedEntryCount;
+    uint8_t fetchedEntryCount;
     OamEntry fetchedEntries[3]; // entries fetched during pipeline.
-    u8 windowLine;
+    uint8_t windowLine;
 
-    u32 currentFrame;
-    u32 lineTicks;
-    u32 *videoBuffer;
+    uint32_t currentFrame;
+    uint32_t lineTicks;
+    uint32_t *videoBuffer;
 } PpuContext;
 
 void ppuInit();
 void ppuTick();
 
-void ppuOamWrite(u16 address, u8 value);
-u8 ppuOamRead(u16 address);
+void ppuOamWrite(uint16_t address, uint8_t value);
+uint8_t ppuOamRead(uint16_t address);
 
-void ppuVramWrite(u16 address, u8 value);
-u8 ppuVramRead(u16 address);
+void ppuVramWrite(uint16_t address, uint8_t value);
+uint8_t ppuVramRead(uint16_t address);
 
 PpuContext *ppuGetContext();

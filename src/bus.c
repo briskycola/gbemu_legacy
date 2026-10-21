@@ -20,7 +20,7 @@
 // 0xFF00 - 0xFF7F : I/O Registers
 // 0xFF80 - 0xFFFE : Zero Page
 
-u8 busRead(u16 address)
+uint8_t busRead(uint16_t address)
 {
     if (address < 0x8000)
     {
@@ -77,7 +77,7 @@ u8 busRead(u16 address)
     return hramRead(address);
 }
 
-void busWrite(u16 address, u8 value)
+void busWrite(uint16_t address, uint8_t value)
 {
     if (address < 0x8000)
     {
@@ -134,15 +134,15 @@ void busWrite(u16 address, u8 value)
     }
 }
 
-u16 busRead16(u16 address)
+uint16_t busRead16(uint16_t address)
 {
-    u16 lo = busRead(address);
-    u16 hi = busRead(address + 1);
+    uint16_t lo = busRead(address);
+    uint16_t hi = busRead(address + 1);
 
     return lo | (hi << 8);
 }
 
-void busWrite16(u16 address, u16 value)
+void busWrite16(uint16_t address, uint16_t value)
 {
     busWrite(address + 1, (value >> 8) & 0xFF);
     busWrite(address, value & 0xFF);

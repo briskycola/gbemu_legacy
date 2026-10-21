@@ -36,10 +36,10 @@ void fetchData()
     case AM_R_D16:
     case AM_D16:
     {
-        u16 lo = busRead(ctx.regs.pc);
+        uint16_t lo = busRead(ctx.regs.pc);
         emuCycles(1);
 
-        u16 hi = busRead(ctx.regs.pc + 1);
+        uint16_t hi = busRead(ctx.regs.pc + 1);
         emuCycles(1);
 
         ctx.fetchedData = lo | (hi << 8);
@@ -63,7 +63,7 @@ void fetchData()
 
     case AM_R_MR:
     {
-        u16 addr = cpuReadReg(ctx.curInst->reg2);
+        uint16_t addr = cpuReadReg(ctx.curInst->reg2);
 
         if (ctx.curInst->reg2 == RT_C)
         {
@@ -129,10 +129,10 @@ void fetchData()
     case AM_A16_R:
     case AM_D16_R:
     {
-        u16 lo = busRead(ctx.regs.pc);
+        uint16_t lo = busRead(ctx.regs.pc);
         emuCycles(1);
 
-        u16 hi = busRead(ctx.regs.pc + 1);
+        uint16_t hi = busRead(ctx.regs.pc + 1);
         emuCycles(1);
 
         ctx.memDest = lo | (hi << 8);
@@ -160,13 +160,13 @@ void fetchData()
 
     case AM_R_A16:
     {
-        u16 lo = busRead(ctx.regs.pc);
+        uint16_t lo = busRead(ctx.regs.pc);
         emuCycles(1);
 
-        u16 hi = busRead(ctx.regs.pc + 1);
+        uint16_t hi = busRead(ctx.regs.pc + 1);
         emuCycles(1);
 
-        u16 addr = lo | (hi << 8);
+        uint16_t addr = lo | (hi << 8);
 
         ctx.regs.pc += 2;
         ctx.fetchedData = busRead(addr);

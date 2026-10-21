@@ -15,7 +15,7 @@ void timerInit()
 
 void timerTick()
 {
-    u16 prevDiv = ctx.div;
+    uint16_t prevDiv = ctx.div;
 
     ctx.div++;
 
@@ -50,7 +50,7 @@ void timerTick()
     }
 }
 
-void timerWrite(u16 address, u8 value)
+void timerWrite(uint16_t address, uint8_t value)
 {
     switch (address)
     {
@@ -76,7 +76,7 @@ void timerWrite(u16 address, u8 value)
     }
 }
 
-u8 timerRead(u16 address)
+uint8_t timerRead(uint16_t address)
 {
     switch (address)
     {

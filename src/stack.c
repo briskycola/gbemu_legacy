@@ -84,27 +84,27 @@
     0xDFFF: 00
 */
 
-void stackPush(u8 data)
+void stackPush(uint8_t data)
 {
     cpuGetRegs()->sp--;
     busWrite(cpuGetRegs()->sp, data);
 }
 
-void stackPush16(u16 data)
+void stackPush16(uint16_t data)
 {
     stackPush((data >> 8) & 0xFF);
     stackPush(data & 0xFF);
 }
 
-u8 stackPop()
+uint8_t stackPop()
 {
     return busRead(cpuGetRegs()->sp++);
 }
 
-u16 stackPop16()
+uint16_t stackPop16()
 {
-    u16 lo = stackPop();
-    u16 hi = stackPop();
+    uint16_t lo = stackPop();
+    uint16_t hi = stackPop();
 
     return (hi << 8) | lo;
 }

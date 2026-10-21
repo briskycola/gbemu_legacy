@@ -5,14 +5,14 @@
 typedef struct
 {
     bool active;
-    u8 byte;
-    u8 value;
-    u8 startDelay;
+    uint8_t byte;
+    uint8_t value;
+    uint8_t startDelay;
 } DmaContext;
 
 static DmaContext ctx;
 
-void dmaStart(u8 start)
+void dmaStart(uint8_t start)
 {
     ctx.active = true;
     ctx.byte = 0;

@@ -59,7 +59,7 @@ void cpuRun()
 
 void uiRun()
 {
-    u32 prevFrame = 0;
+    uint32_t prevFrame = 0;
     uiInit();
 
     while (!ctx.die)

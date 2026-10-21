@@ -2,8 +2,8 @@
 
 #include "common.h"
 
-u8 wramRead(u16 address);
-void wramWrite(u16 address, u8 value);
+uint8_t wramRead(uint16_t address);
+void wramWrite(uint16_t address, uint8_t value);
 
-u8 hramRead(u16 address);
-void hramWrite(u16 address, u8 value);
+uint8_t hramRead(uint16_t address);
+void hramWrite(uint16_t address, uint8_t value);

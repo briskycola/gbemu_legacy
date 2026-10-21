@@ -7,7 +7,7 @@ typedef struct
     bool paused;
     bool running;
     bool die;
-    u64 ticks;
+    uint64_t ticks;
 } EmuContext;
 
 int emuRun(int argc, char **argv);

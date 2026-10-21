@@ -7,7 +7,7 @@
 
 static char serialData[2];
 
-u8 ioRead(u16 address)
+uint8_t ioRead(uint16_t address)
 {
     if (address == 0xFF00)
     {
@@ -54,7 +54,7 @@ u8 ioRead(u16 address)
     return 0;
 }
 
-void ioWrite(u16 address, u8 value)
+void ioWrite(uint16_t address, uint8_t value)
 {
     if (address == 0xFF00)
     {

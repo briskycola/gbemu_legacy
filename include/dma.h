@@ -2,7 +2,7 @@
 
 #include "common.h"
 
-void dmaStart(u8 start);
+void dmaStart(uint8_t start);
 void dmaTick();
 
 bool dmaTransferring();

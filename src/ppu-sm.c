@@ -38,7 +38,7 @@ void loadLineSprites()
 {
     int curY = lcdGetContext()->ly;
 
-    u8 spriteHeight = LCDC_OBJ_HEIGHT;
+    uint8_t spriteHeight = LCDC_OBJ_HEIGHT;
     memset(ppuGetContext()->lineEntryArray, 0,
            sizeof(ppuGetContext()->lineEntryArray));
 
@@ -159,7 +159,7 @@ void ppuModeVblank()
     }
 }
 
-static u32 targetFrameTime = 1000 / 60;
+static uint32_t targetFrameTime = 1000 / 60;
 static long prevFrameTime = 0;
 static long startTimer = 0;
 static long frameCount = 0;
@@ -184,8 +184,8 @@ void ppuModeHblank()
             ppuGetContext()->currentFrame++;
 
             // calc FPS...
-            u32 end = getTicks();
-            u32 frameTime = end - prevFrameTime;
+            uint32_t end = getTicks();
+            uint32_t frameTime = end - prevFrameTime;
 
             if (frameTime < targetFrameTime)
             {
@@ -194,7 +194,7 @@ void ppuModeHblank()
 
             if (end - startTimer >= 1000)
             {
-                u32 fps = frameCount;
+                uint32_t fps = frameCount;
                 startTimer = end;
                 frameCount = 0;
 

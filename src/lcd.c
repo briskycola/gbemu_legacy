@@ -32,17 +32,17 @@ LcdContext *lcdGetContext()
     return &ctx;
 }
 
-u8 lcdRead(u16 address)
+uint8_t lcdRead(uint16_t address)
 {
-    u8 offset = (address - 0xFF40);
-    u8 *p = (u8 *)&ctx;
+    uint8_t offset = (address - 0xFF40);
+    uint8_t *p = (uint8_t *)&ctx;
 
     return p[offset];
 }
 
-void updatePalette(u8 paletteData, u8 pal)
+void updatePalette(uint8_t paletteData, uint8_t pal)
 {
-    u32 *pColors = ctx.bgColors;
+    uint32_t *pColors = ctx.bgColors;
 
     switch (pal)
     {
@@ -60,11 +60,11 @@ void updatePalette(u8 paletteData, u8 pal)
     pColors[3] = colorsDefault[(paletteData >> 6) & 0b11];
 }
 
-void lcdWrite(u16 address, u8 value)
+void lcdWrite(uint16_t address, uint8_t value)
 {
 
-    u8 offset = (address - 0xFF40);
-    u8 *p = (u8 *)&ctx;
+    uint8_t offset = (address - 0xFF40);
+    uint8_t *p = (uint8_t *)&ctx;
     p[offset] = value;
 
     if (offset == 6)

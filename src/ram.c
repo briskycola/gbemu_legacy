@@ -2,13 +2,13 @@
 
 typedef struct
 {
-    u8 wram[0x2000];
-    u8 hram[0x80];
+    uint8_t wram[0x2000];
+    uint8_t hram[0x80];
 } RamContext;
 
 static RamContext ctx;
 
-u8 wramRead(u16 address)
+uint8_t wramRead(uint16_t address)
 {
     address -= 0xC000;
 
@@ -21,21 +21,21 @@ u8 wramRead(u16 address)
     return ctx.wram[address];
 }
 
-void wramWrite(u16 address, u8 value)
+void wramWrite(uint16_t address, uint8_t value)
 {
     address -= 0xC000;
 
     ctx.wram[address] = value;
 }
 
-u8 hramRead(u16 address)
+uint8_t hramRead(uint16_t address)
 {
     address -= 0xFF80;
 
     return ctx.hram[address];
 }
 
-void hramWrite(u16 address, u8 value)
+void hramWrite(uint16_t address, uint8_t value)
 {
     address -= 0xFF80;
 

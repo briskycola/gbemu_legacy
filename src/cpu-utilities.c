@@ -3,12 +3,12 @@
 
 extern CpuContext ctx;
 
-u16 reverse(u16 n)
+uint16_t reverse(uint16_t n)
 {
     return ((n & 0xFF00) >> 8) | ((n & 0x00FF) << 8);
 }
 
-u16 cpuReadReg(RegType rt)
+uint16_t cpuReadReg(RegType rt)
 {
     switch (rt)
     {
@@ -30,13 +30,13 @@ u16 cpuReadReg(RegType rt)
         return ctx.regs.l;
 
     case RT_AF:
-        return reverse(*((u16 *)&ctx.regs.a));
+        return reverse(*((uint16_t *)&ctx.regs.a));
     case RT_BC:
-        return reverse(*((u16 *)&ctx.regs.b));
+        return reverse(*((uint16_t *)&ctx.regs.b));
     case RT_DE:
-        return reverse(*((u16 *)&ctx.regs.d));
+        return reverse(*((uint16_t *)&ctx.regs.d));
     case RT_HL:
-        return reverse(*((u16 *)&ctx.regs.h));
+        return reverse(*((uint16_t *)&ctx.regs.h));
 
     case RT_PC:
         return ctx.regs.pc;
@@ -47,7 +47,7 @@ u16 cpuReadReg(RegType rt)
     }
 }
 
-void cpuSetReg(RegType rt, u16 val)
+void cpuSetReg(RegType rt, uint16_t val)
 {
     switch (rt)
     {
@@ -79,17 +79,17 @@ void cpuSetReg(RegType rt, u16 val)
         break;
 
     case RT_AF:
-        *((u16 *)&ctx.regs.a) = reverse(val);
+        *((uint16_t *)&ctx.regs.a) = reverse(val);
         break;
     case RT_BC:
-        *((u16 *)&ctx.regs.b) = reverse(val);
+        *((uint16_t *)&ctx.regs.b) = reverse(val);
         break;
     case RT_DE:
-        *((u16 *)&ctx.regs.d) = reverse(val);
+        *((uint16_t *)&ctx.regs.d) = reverse(val);
         break;
     case RT_HL:
     {
-        *((u16 *)&ctx.regs.h) = reverse(val);
+        *((uint16_t *)&ctx.regs.h) = reverse(val);
         break;
     }
 
@@ -104,7 +104,7 @@ void cpuSetReg(RegType rt, u16 val)
     }
 }
 
-u8 cpuReadReg8(RegType rt)
+uint8_t cpuReadReg8(RegType rt)
 {
     switch (rt)
     {
@@ -134,7 +134,7 @@ u8 cpuReadReg8(RegType rt)
     }
 }
 
-void cpuSetReg8(RegType rt, u8 val)
+void cpuSetReg8(RegType rt, uint8_t val)
 {
     switch (rt)
     {
@@ -176,12 +176,12 @@ CpuRegisters *cpuGetRegs()
     return &ctx.regs;
 }
 
-u8 cpuGetIntFlags()
+uint8_t cpuGetIntFlags()
 {
     return ctx.intFlags;
 }
 
-void cpuSetIntFlags(u8 value)
+void cpuSetIntFlags(uint8_t value)
 {
     ctx.intFlags = value;
 }

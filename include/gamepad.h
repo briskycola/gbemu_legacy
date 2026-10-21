@@ -17,7 +17,7 @@ typedef struct
 void gamepadInit();
 bool gamepadButtonSel();
 bool gamepadDirSel();
-void gamepadSetSel(u8 value);
+void gamepadSetSel(uint8_t value);
 
 GamepadState *gamepadGetState();
-u8 gamepadGetOutput();
+uint8_t gamepadGetOutput();

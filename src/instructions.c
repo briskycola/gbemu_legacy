@@ -278,7 +278,7 @@ instruction instructions[0x100] = {
     [0xFF] = {IN_RST, AM_IMP, RT_NONE, RT_NONE, CT_NONE, 0x38},
 };
 
-instruction *instructionByOpcode(u8 opcode)
+instruction *instructionByOpcode(uint8_t opcode)
 {
     return &instructions[opcode];
 }
