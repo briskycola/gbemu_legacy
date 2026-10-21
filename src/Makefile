@@ -1,6 +1,6 @@
 # compiler and flags
 CC = gcc
-CFLAGS = -std=c11 -Wall -Werror -fopenmp
+CFLAGS = -std=c11 -Wall -Werror -fopenmp -MMD -MP
 
 # source files
 SRCS = bus.c \
@@ -28,6 +28,7 @@ SRCS = bus.c \
 
 
 OBJS = $(SRCS:.c=.o)
+DEPS = $(OBJS:.o=.d)
 
 # executable file
 TARGET = gbemu
@@ -45,6 +46,8 @@ $(TARGET): $(OBJS)
 
 # clean up object files and binary
 clean:
-	rm -rf $(OBJS) $(TARGET)
+	rm -rf $(OBJS) $(DEPS) $(TARGET)
+
+-include $(DEPS)
 
 .PHONY: all clean
